@@ -1,0 +1,33 @@
+{
+  "name": "todo-api",
+  "version": "1.0.0",
+  "description": "A quick training API. Simple CRUD.",
+  "main": "src/index.js",
+  "scripts": {
+    "run:dev": "nodemon src/index.js --ignore src/db/db.json",
+    "start": "node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/titouansola/todo-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/titouansola/todo-api/issues"
+  },
+  "homepage": "https://github.com/titouansola/todo-api#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-swagger-generator": "^1.1.17",
+    "lodash": "^4.17.15",
+    "lowdb": "^1.0.0",
+    "uuid": "^7.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
