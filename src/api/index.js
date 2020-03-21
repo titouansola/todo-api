@@ -1,6 +1,10 @@
 const apiRoutes = require('express').Router();
 const BaseError = require('../errors/error');
 
+apiRoutes.get('/ping', (req, res) => {
+	res.end();
+})
+
 apiRoutes.use('/todo', require('./todo'));
 
 apiRoutes.use((err, req, res, next) => {
