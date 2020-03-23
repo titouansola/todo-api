@@ -1,44 +1,70 @@
-const createInstanceDB = require('../db');
-const generateID = require('uuid').v4;
+const { ObjectID } = require('mongodb');
+const MongoInstance = require('../db');
 const NotFoundError = require('../errors/notfound.error');
 
-const TODOS_COLLECTION_NAME = 'todos';
+const aggregate = (elt) => {
+	const newElt = { ...elt };
+	newElt.id = elt._id;
+	delete newElt._id;
+	return newElt;
+}
 
-async function fetchOneById(id) {
-	const db = await createInstanceDB();
-	const todo = db.get(TODOS_COLLECTION_NAME).find({ id }).value();
-
-	if (!todo) {
-		throw new NotFoundError();
+const fetchOneById = (id) => new Promise((resolve, reject) => {
+	let _id;
+	if (id.length !== 24) {
+		return reject(new NotFoundError());
 	}
-	return todo;
-}
+	MongoInstance.collection.findOne({ _id }, (err, item) => {
+		if (err || !item) {
+			return reject(new NotFoundError());
+		}
+		resolve(aggregate(item));
+	})
+});
 
-async function fetchAll() {
-	const db = await createInstanceDB();
-	return db.get(TODOS_COLLECTION_NAME);
-}
+const fetchAll = () => new Promise((resolve, reject) => {
+	const all = {};
+	MongoInstance.collection.find(all).toArray((err, items) => {
+		if (err) {
+			console.error(err)
+			return reject(err);
+		}
+		resolve(items.map(aggregate));
+	});
+});
 
-async function createOne(todo) {
-	todo.id = generateID();
-	const db = await createInstanceDB();
-	return db.get(TODOS_COLLECTION_NAME).push(todo).write();
-}
+const createOne = (todo) => new Promise((resolve, reject) => {
+	MongoInstance.collection.insertOne(todo, (err) => {
+		if (err) {
+			return reject(err);
+		}
+		resolve();
+	});
+});
 
-async function updateOne(id, todo) {
-	const db = await createInstanceDB();
-	const toUpdate = db.get(TODOS_COLLECTION_NAME).find({ id });
+const updateOne = (id, todo) => new Promise((resolve, reject) => {
+	const filter = {
+		_id: new ObjectID(id)
+	};
+	const update = {
+		$set: todo
+	};
+	MongoInstance.collection.updateOne(filter, update, (err) => {
+		if (err) {
+			return reject(err);
+		}
+		resolve();
+	});
+});
 
-	if (!toUpdate.value()) {
-		throw new NotFoundError();
-	}
-	return toUpdate.assign(todo).write();
-}
-
-async function deleteOne(id) {
-	const db = await createInstanceDB();
-	return db.get(TODOS_COLLECTION_NAME).remove({ id }).write();
-}
+const deleteOne = (id) => new Promise((resolve, reject) => {
+	MongoInstance.collection.deleteOne({ _id: new ObjectID(id) }, (err) => {
+		if (err) {
+			return reject(err);
+		}
+		resolve();
+	});
+});
 
 module.exports = {
 	fetchOneById,

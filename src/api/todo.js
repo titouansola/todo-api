@@ -35,6 +35,7 @@ todoRoutes.get('/', async (req, res, next) => {
 		const todos = await todoService.fetchAll();
 		res.json({ todos });
 	} catch (e) {
+		console.error(e);
 		next(e);
 	}
 });
@@ -51,6 +52,7 @@ todoRoutes.get('/:id', async (req, res, next) => {
 		const todo = await todoService.fetchOneById(req.params.id);
 		res.json(todo);
 	} catch (e) {
+		console.error(e);
 		next(e);
 	}
 });
@@ -67,6 +69,7 @@ todoRoutes.post('/', async (req, res, next) => {
 		await todoService.createOne(req.body);
 		res.end('OK');
 	} catch (e) {
+		console.error(e);
 		next(e);
 	}
 });
@@ -84,6 +87,7 @@ todoRoutes.put('/:id', async (req, res, next) => {
 		await todoService.updateOne(req.params.id, req.body);
 		res.end('OK');
 	} catch (e) {
+		console.error(e);
 		next(e);
 	}
 });
@@ -100,6 +104,7 @@ todoRoutes.delete('/:id', async (req, res, next) => {
 		await todoService.deleteOne(req.params.id);
 		res.end('OK');
 	} catch (e) {
+		console.error(e);
 		next(e);
 	}
 });
